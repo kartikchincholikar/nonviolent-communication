@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Non-Violent Disagreements</title>
+    <title>Non-Violent Communication</title>
     <style>
-        /* CSS: This handles the Visuals */
+        /* --- CSS STYLES --- */
         :root {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --highlight-color: #FFD700; /* Nice Yellow */
-            --subtle-color: #888;
+            --bg-color: #0f0f0f;
+            --text-muted: #757575;
+            --text-bright: #eeeeee;
+            --highlight: #FFD700; /* Gold */
+            --accent: #333;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body, html {
@@ -19,94 +24,163 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden; /* Prevents standard scrollbars */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            user-select: none; /* Makes it feel like an app, not a document */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* No scrollbars */
+            color: var(--text-bright);
         }
 
+        /* Main Container: Flex column to manage the three zones */
         #app {
-            width: 90%;
-            max-width: 800px;
-            height: 90vh;
+            height: 100vh;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* --- THE THREE ZONES --- */
+        
+        /* 1. TOP ZONE: The "Pre-Text" */
+        /* Aligns text to the bottom so it sits right on top of the phrase */
+        #zone-top {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 20px;
+            
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            font-weight: 300;
+            line-height: 1.4;
+            transition: opacity 0.4s ease;
+        }
+
+        /* 2. MIDDLE ZONE: The "Phrase" (ANCHOR) */
+        /* Fixed height. Keeps the phrase exactly in the center vertically */
+        #zone-center {
+            height: 120px; /* Fixed anchor height */
+            flex-shrink: 0; /* Never shrink */
+            display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             position: relative;
         }
+        
+        /* The Highlighted Phrase Styling */
+        #phrase-display {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--highlight);
+            text-transform: lowercase; /* Optional stylistic choice, remove if unwanted */
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        /* The Context Label (e.g., "Group Differences") */
-        #context-label {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: var(--subtle-color);
+        /* Context Label (Small tag above the phrase) */
+        #context-tag {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 2rem;
-            transition: opacity 0.3s ease;
+            color: #444;
+            background: #1a1a1a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
         }
 
-        /* The Main Sentence */
-        #main-text {
-            /* Dynamic font size: shrinks on mobile, grows on desktop */
-            font-size: clamp(1.5rem, 4vw, 3.5rem); 
-            line-height: 1.4;
+        /* 3. BOTTOM ZONE: The "Post-Text" */
+        /* Aligns text to the top so it hangs right below the phrase */
+        #zone-bottom {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start; /* Aligns content to top */
+            align-items: center; /* Horizontally center */
+            flex-direction: column;
+            text-align: center;
+            padding-top: 20px;
+            
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
             font-weight: 300;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            line-height: 1.4;
+            transition: opacity 0.4s ease;
         }
 
-        /* The Yellow Highlight */
-        .highlight {
-            color: var(--highlight-color);
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-        }
-
-        /* Instructions overlay */
-        #instructions {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.9rem;
-            color: var(--subtle-color);
-            opacity: 0.7;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 0.8; }
-            100% { opacity: 0.3; }
-        }
-
-        /* Animation classes */
+        /* --- UTILS --- */
         .fade-out {
             opacity: 0;
-            transform: scale(0.95);
+            transform: translateY(10px);
         }
-        .fade-in {
-            opacity: 1;
-            transform: scale(1);
+
+        /* Instructions Overlay */
+        #instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #444;
+            pointer-events: none;
+            opacity: 0.6;
         }
+
+        /* Progress Bar */
+        #progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--highlight);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
     </style>
 </head>
 <body>
 
+    <div id="progress"></div>
+
     <div id="app">
-        <div id="context-label">Loading...</div>
-        <div id="main-text"></div>
-        <div id="instructions">Scroll or Swipe to navigate</div>
+        <!-- Zone 1: Prefix -->
+        <div id="zone-top">
+            <span id="text-prefix"></span>
+        </div>
+
+        <!-- Zone 2: The Anchor Phrase -->
+        <div id="zone-center">
+            <div id="context-tag">Context</div>
+            <div id="phrase-display">Phrase</div>
+        </div>
+
+        <!-- Zone 3: Suffix -->
+        <div id="zone-bottom">
+            <span id="text-suffix"></span>
+        </div>
+        
+        <div id="instructions">Scroll / Swipe</div>
     </div>
 
     <script>
-        /* JAVASCRIPT: This handles the Logic and Data */
+        /* --- JAVASCRIPT LOGIC --- */
 
-        // 1. The Data (All your examples organized)
+        // 1. DATA PREPARATION
+        // I have cleaned the phrases to remove the curly braces for splitting purposes
         const data = [
-            // {The thing is..}
+             // {The thing is..}
             { phrase: "The thing is..", context: "Group Differences", text: "I see the results for the teenagers. The thing is.. we didn't test any adults, so we can't say this works for everyone." },
             { phrase: "The thing is..", context: "Tools", text: "The scale is easy to use. The thing is.. it isn't sensitive enough to measure the very small changes we are looking for." },
             { phrase: "The thing is..", context: "Dropouts", text: "The final numbers look good. The thing is.. half the people quit the study early, so the data might be one-sided." },
@@ -149,118 +223,125 @@
             { phrase: "I appreciate the idea..", context: "Meetings", text: "I appreciate the idea.. of meeting every morning, but maybe once a week is enough so we have time to actually do the work." }
         ];
 
+        // 2. STATE & DOM ELEMENTS
         let currentIndex = 0;
-        const contextLabel = document.getElementById('context-label');
-        const mainText = document.getElementById('main-text');
+        let isLocked = false; // Prevents rapid scrolling
+
+        const elPrefix = document.getElementById('text-prefix');
+        const elPhrase = document.getElementById('phrase-display');
+        const elSuffix = document.getElementById('text-suffix');
+        const elContext = document.getElementById('context-tag');
+        const elProgress = document.getElementById('progress');
         
-        // 2. Function to Render Content
-        function renderSlide(index) {
+        const zoneTop = document.getElementById('zone-top');
+        const zoneBottom = document.getElementById('zone-bottom');
+
+        // 3. RENDER LOGIC
+        function render(index) {
             const item = data[index];
-            
-            // Fade out
-            contextLabel.classList.add('fade-out');
-            mainText.classList.add('fade-out');
-            
+
+            // Update Progress Bar
+            const percent = ((index + 1) / data.length) * 100;
+            elProgress.style.width = `${percent}%`;
+
+            // Split text around the phrase
+            // We use .split() to separate the sentence into [Prefix, Suffix]
+            // We assume the phrase appears exactly once in the text.
+            const parts = item.text.split(item.phrase);
+            const prefix = parts[0] || "";
+            const suffix = parts[1] || "";
+
+            // Visual Fade Out
+            zoneTop.style.opacity = 0;
+            zoneBottom.style.opacity = 0;
+            elPhrase.style.transform = "scale(0.9)";
+
             setTimeout(() => {
-                // Update text
-                contextLabel.textContent = item.context;
-                
-                // Highlight logic: replace the phrase with a span
-                const highlightedText = item.text.replace(
-                    item.phrase, 
-                    `<span class="highlight">${item.phrase}</span>`
-                );
-                mainText.innerHTML = highlightedText;
+                // Update Content
+                elContext.textContent = item.context;
+                elPrefix.textContent = prefix.trim();
+                elPhrase.textContent = item.phrase; // The anchor
+                elSuffix.textContent = suffix.trim();
 
-                // Fade in
-                contextLabel.classList.remove('fade-out');
-                mainText.classList.remove('fade-out');
-                contextLabel.classList.add('fade-in');
-                mainText.classList.add('fade-in');
-            }, 300);
+                // Visual Fade In
+                zoneTop.style.opacity = 1;
+                zoneBottom.style.opacity = 1;
+                elPhrase.style.transform = "scale(1)";
+            }, 200);
         }
 
-        // 3. Navigation Logic
-        function nextSlide() {
-            if (currentIndex < data.length - 1) {
-                currentIndex++;
-                renderSlide(currentIndex);
+        // 4. NAVIGATION CONTROLLER
+        function navigate(direction) {
+            // DIRECTION: 1 for next, -1 for prev
+            if (isLocked) return; // Ignore input if locked
+
+            if (direction === 1) {
+                if (currentIndex < data.length - 1) {
+                    currentIndex++;
+                    triggerLock();
+                    render(currentIndex);
+                }
             } else {
-                // Loop back to start (optional)
-                currentIndex = 0;
-                renderSlide(currentIndex);
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    triggerLock();
+                    render(currentIndex);
+                }
             }
         }
 
-        function prevSlide() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderSlide(currentIndex);
-            } else {
-                // Loop to end (optional)
-                currentIndex = data.length - 1;
-                renderSlide(currentIndex);
-            }
+        // 5. LOCKING MECHANISM (UX fix for "Two changes in one scroll")
+        function triggerLock() {
+            isLocked = true;
+            // Lock interaction for 1200ms (1.2 seconds) to prevent momentum scrolling skipping slides
+            setTimeout(() => {
+                isLocked = false;
+            }, 1200);
         }
 
-        // 4. Input Handling (Scroll, Swipe, Keys)
+        // 6. INPUT HANDLERS
 
-        // Mouse Wheel (Debounced to prevent rapid skipping)
-        let isScrolling = false;
+        // A. Mouse Wheel
         window.addEventListener('wheel', (e) => {
-            if (isScrolling) return;
-            isScrolling = true;
-            
-            if (e.deltaY > 0) nextSlide();
-            else prevSlide();
-
-            setTimeout(() => { isScrolling = false; }, 800);
+            if (isLocked) return;
+            // Threshold ensures tiny accidental movements don't trigger
+            if (Math.abs(e.deltaY) > 20) {
+                if (e.deltaY > 0) navigate(1);
+                else navigate(-1);
+            }
         });
 
-        // Touch Swipe
-        let touchStartX = 0;
+        // B. Touch Swipe
         let touchStartY = 0;
-        let touchEndX = 0;
         let touchEndY = 0;
 
         document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         }, false);
 
         document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
+            if (isLocked) return;
             touchEndY = e.changedTouches[0].screenY;
             handleSwipe();
         }, false);
 
         function handleSwipe() {
-            const xDiff = touchStartX - touchEndX;
             const yDiff = touchStartY - touchEndY;
-            
-            // Detect if the swipe was significant enough
-            if (Math.abs(xDiff) > 50 || Math.abs(yDiff) > 50) {
-                // Determine if it was mostly horizontal or vertical
-                if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                    // Left/Right Swipe
-                    if (xDiff > 0) nextSlide(); // Swiped Left
-                    else prevSlide(); // Swiped Right
-                } else {
-                    // Up/Down Swipe
-                    if (yDiff > 0) nextSlide(); // Swiped Up
-                    else prevSlide(); // Swiped Down
-                }
+            // Threshold of 40px to count as a swipe
+            if (Math.abs(yDiff) > 40) {
+                if (yDiff > 0) navigate(1); // Swipe Up -> Next
+                else navigate(-1); // Swipe Down -> Prev
             }
         }
 
-        // Keyboard support
+        // C. Keyboard
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') navigate(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
         });
 
         // Initialize
-        renderSlide(currentIndex);
+        render(currentIndex);
 
     </script>
 </body>
