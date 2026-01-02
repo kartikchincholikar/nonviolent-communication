@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Non-Violent Disagreements</title>
+    <style>
+        /* CSS: This handles the Visuals */
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --highlight-color: #FFD700; /* Nice Yellow */
+            --subtle-color: #888;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Prevents standard scrollbars */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none; /* Makes it feel like an app, not a document */
+        }
+
+        #app {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* The Context Label (e.g., "Group Differences") */
+        #context-label {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--subtle-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            transition: opacity 0.3s ease;
+        }
+
+        /* The Main Sentence */
+        #main-text {
+            /* Dynamic font size: shrinks on mobile, grows on desktop */
+            font-size: clamp(1.5rem, 4vw, 3.5rem); 
+            line-height: 1.4;
+            font-weight: 300;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* The Yellow Highlight */
+        .highlight {
+            color: var(--highlight-color);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Instructions overlay */
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--subtle-color);
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Animation classes */
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .fade-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <div id="context-label">Loading...</div>
+        <div id="main-text"></div>
+        <div id="instructions">Scroll or Swipe to navigate</div>
+    </div>
+
+    <script>
+        /* JAVASCRIPT: This handles the Logic and Data */
+
+        // 1. The Data (All your examples organized)
+        const data = [
+            // {The thing is..}
+            { phrase: "The thing is..", context: "Group Differences", text: "I see the results for the teenagers. The thing is.. we didn't test any adults, so we can't say this works for everyone." },
+            { phrase: "The thing is..", context: "Tools", text: "The scale is easy to use. The thing is.. it isn't sensitive enough to measure the very small changes we are looking for." },
+            { phrase: "The thing is..", context: "Dropouts", text: "The final numbers look good. The thing is.. half the people quit the study early, so the data might be one-sided." },
+            { phrase: "The thing is..", context: "Timing", text: "I know we want to finish today. The thing is.. the plants need three more days to grow before we can measure them." },
+            { phrase: "The thing is..", context: "Rules", text: "The report is ready. The thing is.. the school board has a special format we have to follow for our writing." },
+            
+            // {Can we make an adjustment..}
+            { phrase: "Can we make an adjustment..", context: "Questions", text: "The interview plan is good. Can we make an adjustment.. to the first question so it doesn't sound like we are nudging them to say 'yes'?" },
+            { phrase: "Can we make an adjustment..", context: "Group Size", text: "The first test worked well. Can we make an adjustment.. and add 20 more people to the group to be extra sure of the result?" },
+            { phrase: "Can we make an adjustment..", context: "Math Choice", text: "I see you used a simple average. Can we make an adjustment.. and look at the middle number instead, since those two high scores are an accident?" },
+            { phrase: "Can we make an adjustment..", context: "Safety", text: "The lab is set up. Can we make an adjustment.. and wear double gloves for this part of the test just to be safe?" },
+            { phrase: "Can we make an adjustment..", context: "Writing", text: "I read the draft. Can we make an adjustment.. to the ending to be more honest about what we still don't know?" },
+
+            // {I don't share the same sentiment..}
+            { phrase: "I don't share the same sentiment..", context: "The Guess", text: "You think the medicine caused the change. I don't share the same sentiment.. because the change happened before they took the pill." },
+            { phrase: "I don't share the same sentiment..", context: "Patterns", text: "You see a clear pattern here. I don't share the same sentiment..; to me, it looks like the dots are just scattered randomly." },
+            { phrase: "I don't share the same sentiment..", context: "Importance", text: "You think this is a huge discovery. I don't share the same sentiment.. yet; I think we need to do the test one more time to be sure." },
+            { phrase: "I don't share the same sentiment..", context: "Team Goal", text: "The group wants to focus on computers. I don't share the same sentiment.. because I think talking to people face-to-face gives better info." },
+            { phrase: "I don't share the same sentiment..", context: "Partners", text: "You think this other lab is great to work with. I don't share the same sentiment.. because they were very slow to share their notes last time." },
+
+            // {My possible concern with that is..}
+            { phrase: "My possible concern with that is..", context: "Picking People", text: "Testing only our friends is fast. My possible concern with that is.. that they might just tell us what they think we want to hear." },
+            { phrase: "My possible concern with that is..", context: "Heat/Cold", text: "Keeping the samples on the desk is fine for now. My possible concern with that is.. they might spoil if the room gets too warm at night." },
+            { phrase: "My possible concern with that is..", context: "Privacy", text: "We took the names off the papers. My possible concern with that is.. that someone could still guess who the people are by their birthdays." },
+            { phrase: "My possible concern with that is..", context: "Real Life", text: "The test worked perfectly in the quiet lab. My possible concern with that is.. it might not work at all in a noisy, busy house." },
+            { phrase: "My possible concern with that is..", context: "Apps", text: "This new app is fast for tracking. My possible concern with that is.. it crashes a lot on older phones." },
+
+            // {I feel the other way around..}
+            { phrase: "I feel the other way around..", context: "What Caused It", text: "You think being tired makes people sad. I feel the other way around..—I think being sad is what is keeping them from sleeping." },
+            { phrase: "I feel the other way around..", context: "Mistakes", text: "You think that high number is a mistake. I feel the other way around..; I think that is the most important part of the whole test." },
+            { phrase: "I feel the other way around..", context: "Money", text: "You want to buy new tools. I feel the other way around..—I think we should spend the money on better books and sources." },
+            { phrase: "I feel the other way around..", context: "Ideas", text: "You are looking at this like a science problem. I feel the other way around..—I think it is actually a problem with how people behave." },
+            { phrase: "I feel the other way around..", context: "Sharing", text: "You think we should show the results now. I feel the other way around..—I think we should wait until we check the math again." },
+
+            // {I appreciate the idea..}
+            { phrase: "I appreciate the idea..", context: "The Plan", text: "I appreciate the idea.. of testing 100 people at once, but I’m worried we don't have enough chairs for everyone." },
+            { phrase: "I appreciate the idea..", context: "Pictures", text: "I appreciate the idea.. of using a colorful chart, but a simple list might be easier for the boss to read quickly." },
+            { phrase: "I appreciate the idea..", context: "New Help", text: "I appreciate the idea.. of asking the history teacher for help, but let's make sure we explain our science goals to them first." },
+            { phrase: "I appreciate the idea..", context: "Words", text: "I appreciate the idea.. of using big words to sound smart, but using simple words will help more people understand our work." },
+            { phrase: "I appreciate the idea..", context: "Meetings", text: "I appreciate the idea.. of meeting every morning, but maybe once a week is enough so we have time to actually do the work." }
+        ];
+
+        let currentIndex = 0;
+        const contextLabel = document.getElementById('context-label');
+        const mainText = document.getElementById('main-text');
+        
+        // 2. Function to Render Content
+        function renderSlide(index) {
+            const item = data[index];
+            
+            // Fade out
+            contextLabel.classList.add('fade-out');
+            mainText.classList.add('fade-out');
+            
+            setTimeout(() => {
+                // Update text
+                contextLabel.textContent = item.context;
+                
+                // Highlight logic: replace the phrase with a span
+                const highlightedText = item.text.replace(
+                    item.phrase, 
+                    `<span class="highlight">${item.phrase}</span>`
+                );
+                mainText.innerHTML = highlightedText;
+
+                // Fade in
+                contextLabel.classList.remove('fade-out');
+                mainText.classList.remove('fade-out');
+                contextLabel.classList.add('fade-in');
+                mainText.classList.add('fade-in');
+            }, 300);
+        }
+
+        // 3. Navigation Logic
+        function nextSlide() {
+            if (currentIndex < data.length - 1) {
+                currentIndex++;
+                renderSlide(currentIndex);
+            } else {
+                // Loop back to start (optional)
+                currentIndex = 0;
+                renderSlide(currentIndex);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderSlide(currentIndex);
+            } else {
+                // Loop to end (optional)
+                currentIndex = data.length - 1;
+                renderSlide(currentIndex);
+            }
+        }
+
+        // 4. Input Handling (Scroll, Swipe, Keys)
+
+        // Mouse Wheel (Debounced to prevent rapid skipping)
+        let isScrolling = false;
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            isScrolling = true;
+            
+            if (e.deltaY > 0) nextSlide();
+            else prevSlide();
+
+            setTimeout(() => { isScrolling = false; }, 800);
+        });
+
+        // Touch Swipe
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const xDiff = touchStartX - touchEndX;
+            const yDiff = touchStartY - touchEndY;
+            
+            // Detect if the swipe was significant enough
+            if (Math.abs(xDiff) > 50 || Math.abs(yDiff) > 50) {
+                // Determine if it was mostly horizontal or vertical
+                if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                    // Left/Right Swipe
+                    if (xDiff > 0) nextSlide(); // Swiped Left
+                    else prevSlide(); // Swiped Right
+                } else {
+                    // Up/Down Swipe
+                    if (yDiff > 0) nextSlide(); // Swiped Up
+                    else prevSlide(); // Swiped Down
+                }
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
+        });
+
+        // Initialize
+        renderSlide(currentIndex);
+
+    </script>
+</body>
+</html>
