@@ -44,7 +44,6 @@
         /* --- THE THREE ZONES --- */
         
         /* 1. TOP ZONE: The "Pre-Text" */
-        /* Aligns text to the bottom so it sits right on top of the phrase */
         #zone-top {
             flex: 1;
             display: flex;
@@ -58,14 +57,13 @@
             color: var(--text-muted);
             font-weight: 300;
             line-height: 1.4;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.2s ease; /* Sped up transition */
         }
 
         /* 2. MIDDLE ZONE: The "Phrase" (ANCHOR) */
-        /* Fixed height. Keeps the phrase exactly in the center vertically */
         #zone-center {
-            height: 120px; /* Fixed anchor height */
-            flex-shrink: 0; /* Never shrink */
+            height: 120px; 
+            flex-shrink: 0; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -73,40 +71,22 @@
             position: relative;
         }
         
-        /* The Highlighted Phrase Styling */
         #phrase-display {
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             font-weight: 800;
             color: var(--highlight);
-            text-transform: lowercase; /* Optional stylistic choice, remove if unwanted */
+            text-transform: lowercase; 
             letter-spacing: -0.5px;
             text-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* Context Label (Small tag above the phrase) */
-        #context-tag {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #444;
-            background: #1a1a1a;
-            padding: 4px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         /* 3. BOTTOM ZONE: The "Post-Text" */
-        /* Aligns text to the top so it hangs right below the phrase */
         #zone-bottom {
             flex: 1;
             display: flex;
-            justify-content: flex-start; /* Aligns content to top */
-            align-items: center; /* Horizontally center */
+            justify-content: flex-start; 
+            align-items: center; 
             flex-direction: column;
             text-align: center;
             padding-top: 20px;
@@ -115,7 +95,7 @@
             color: var(--text-muted);
             font-weight: 300;
             line-height: 1.4;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.2s ease; /* Sped up transition */
         }
 
         /* --- UTILS --- */
@@ -145,7 +125,7 @@
             height: 4px;
             background: var(--highlight);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.2s ease;
         }
 
     </style>
@@ -178,57 +158,56 @@
 
         // 1. DATA PREPARATION
         const data = [
-            // {Well that}
-            { phrase: "Well that", context: "Data Trends", text: "The numbers show a clear upward trend. Well that might be true for the summer months, but what about the winter?" },
-            { phrase: "Well that", context: "Schedules", text: "We can easily finish this by Friday. Well that would be ideal, but we still have three unchecked dependencies to resolve." },
-            { phrase: "Well that", context: "Budgets", text: "We should just cut the marketing budget entirely. Well that is certainly an option, though it might hurt our overall sales next quarter." },
-            { phrase: "Well that", context: "Assumptions", text: "Everyone prefers the new design interface. Well that seems to be the consensus here, but the user feedback says otherwise." },
-            { phrase: "Well that", context: "Pacing", text: "Let's push the update tonight to fix the bug. Well that solves the immediate issue, yet it risks introducing new errors without QA." },
+            { phrase: "Well that", text: "The numbers show a clear upward trend. Well that might be true for the summer months, but what about the winter?" },
+            { phrase: "Well that", text: "We can easily finish this by Friday. Well that would be ideal, but we still have three unchecked dependencies to resolve." },
+            { phrase: "Well that", text: "We should just cut the marketing budget entirely. Well that is certainly an option, though it might hurt our overall sales next quarter." },
+            { phrase: "Well that", text: "Everyone prefers the new design interface. Well that seems to be the consensus here, but the user feedback says otherwise." },
+            { phrase: "Well that", text: "Let's push the update tonight to fix the bug. Well that solves the immediate issue, yet it risks introducing new errors without QA." },
             
-            // {Ermmmmm I mean...}
-            { phrase: "Ermmmmm I mean...", context: "Design", text: "I think we should use bright neon colors for the background. Ermmmmm I mean... I can see why that's eye-catching, but it might strain the users' eyes." },
-            { phrase: "Ermmmmm I mean...", context: "Workload", text: "You can just take over this entire project for me. Ermmmmm I mean... I'm flattered you trust me with it, but I'm currently at full capacity." },
-            { phrase: "Ermmmmm I mean...", context: "Testing", text: "We really don't need to test the old module. Ermmmmm I mean... it's usually stable, but it connects to the new database now so we should be careful." },
-            { phrase: "Ermmmmm I mean...", context: "Deadlines", text: "Let's just promise the client we will have it by tomorrow. Ermmmmm I mean... we could try, but I'd hate to overpromise and underdeliver." },
-            { phrase: "Ermmmmm I mean...", context: "Directions", text: "The best way forward is to rewrite the whole app. Ermmmmm I mean... a rewrite sounds clean, but an incremental update is a lot less risky." },
+            { phrase: "Ermmmmm I mean...", text: "I think we should use bright neon colors for the background. Ermmmmm I mean... I can see why that's eye-catching, but it might strain the users' eyes." },
+            { phrase: "Ermmmmm I mean...", text: "You can just take over this entire project for me. Ermmmmm I mean... I'm flattered you trust me with it, but I'm currently at full capacity." },
+            { phrase: "Ermmmmm I mean...", text: "We really don't need to test the old module. Ermmmmm I mean... it's usually stable, but it connects to the new database now so we should be careful." },
+            { phrase: "Ermmmmm I mean...", text: "Let's just promise the client we will have it by tomorrow. Ermmmmm I mean... we could try, but I'd hate to overpromise and underdeliver." },
+            { phrase: "Ermmmmm I mean...", text: "The best way forward is to rewrite the whole app. Ermmmmm I mean... a rewrite sounds clean, but an incremental update is a lot less risky." },
 
-            // {As I understand it...}
-            { phrase: "As I understand it...", context: "Policy", text: "The client said we absolutely have to use their servers. As I understand it... they prefer their servers, but are open to cloud options if we prove it's secure." },
-            { phrase: "As I understand it...", context: "Scope", text: "This feature covers everything the user wants. As I understand it... there were still a few edge cases we haven't mapped out yet." },
-            { phrase: "As I understand it...", context: "Roles", text: "Marketing is handling the launch entirely on their own. As I understand it... they are leading it, but our tech team needs to be on standby." },
-            { phrase: "As I understand it...", context: "Metrics", text: "The drop-off rate means the site is broken. As I understand it... the drop-off is actually typical for a holiday weekend in this industry." },
-            { phrase: "As I understand it...", context: "Contracts", text: "We can't change the terms of the agreement now. As I understand it... there is actually a 30-day window where amendments can still be filed." },
+            { phrase: "As I understand it...", text: "The client said we absolutely have to use their servers. As I understand it... they prefer their servers, but are open to cloud options if we prove it's secure." },
+            { phrase: "As I understand it...", text: "This feature covers everything the user wants. As I understand it... there were still a few edge cases we haven't mapped out yet." },
+            { phrase: "As I understand it...", text: "Marketing is handling the launch entirely on their own. As I understand it... they are leading it, but our tech team needs to be on standby." },
+            { phrase: "As I understand it...", text: "The drop-off rate means the site is broken. As I understand it... the drop-off is actually typical for a holiday weekend in this industry." },
+            { phrase: "As I understand it...", text: "We can't change the terms of the agreement now. As I understand it... there is actually a 30-day window where amendments can still be filed." },
 
-            // {Please correct me if I'm wrong}
-            { phrase: "Please correct me if I'm wrong", context: "History", text: "We tried this approach last year and it failed. Please correct me if I'm wrong, but didn't it fail because we lacked the proper budget at the time?" },
-            { phrase: "Please correct me if I'm wrong", context: "Logistics", text: "All the shipments go out on Tuesday mornings. Please correct me if I'm wrong, but I thought the overseas packages leave on Wednesdays." },
-            { phrase: "Please correct me if I'm wrong", context: "Ownership", text: "Sarah is the sole owner of this module. Please correct me if I'm wrong, but wasn't David also assigned as a co-maintainer last week?" },
-            { phrase: "Please correct me if I'm wrong", context: "Requirements", text: "The application only needs to support iOS devices. Please correct me if I'm wrong, but the initial project brief mentioned Android as well." },
-            { phrase: "Please correct me if I'm wrong", context: "Performance", text: "The servers are currently running at 100% capacity. Please correct me if I'm wrong, but I recall the dashboard showing 75% just a minute ago." },
+            { phrase: "Please correct me if I'm wrong", text: "We tried this approach last year and it failed. Please correct me if I'm wrong, but didn't it fail because we lacked the proper budget at the time?" },
+            { phrase: "Please correct me if I'm wrong", text: "All the shipments go out on Tuesday mornings. Please correct me if I'm wrong, but I thought the overseas packages leave on Wednesdays." },
+            { phrase: "Please correct me if I'm wrong", text: "Sarah is the sole owner of this module. Please correct me if I'm wrong, but wasn't David also assigned as a co-maintainer last week?" },
+            { phrase: "Please correct me if I'm wrong", text: "The application only needs to support iOS devices. Please correct me if I'm wrong, but the initial project brief mentioned Android as well." },
+            { phrase: "Please correct me if I'm wrong", text: "The servers are currently running at 100% capacity. Please correct me if I'm wrong, but I recall the dashboard showing 75% just a minute ago." },
 
-            // {I'm coming at it from..}
-            { phrase: "I'm coming at it from..", context: "Priorities", text: "We should focus purely on the visual design right now. I'm coming at it from.. an engineering perspective, where performance is my main worry." },
-            { phrase: "I'm coming at it from..", context: "User Experience", text: "Adding more buttons gives the user more control. I'm coming at it from.. a new user's point of view, which might feel a bit overwhelming." },
-            { phrase: "I'm coming at it from..", context: "Finances", text: "This vendor is obviously the cheapest option. I'm coming at it from.. a long-term maintenance angle, where cheap often means more work later." },
-            { phrase: "I'm coming at it from..", context: "Strategy", text: "We should target enterprise companies immediately. I'm coming at it from.. a risk-management side, preferring to test with smaller clients first." },
-            { phrase: "I'm coming at it from..", context: "Culture", text: "Mandatory overtime is the only way to finish this. I'm coming at it from.. a team morale standpoint, which could plummet if we do that." },
+            { phrase: "I'm coming at it from..", text: "We should focus purely on the visual design right now. I'm coming at it from.. an engineering perspective, where performance is my main worry." },
+            { phrase: "I'm coming at it from..", text: "Adding more buttons gives the user more control. I'm coming at it from.. a new user's point of view, which might feel a bit overwhelming." },
+            { phrase: "I'm coming at it from..", text: "This vendor is obviously the cheapest option. I'm coming at it from.. a long-term maintenance angle, where cheap often means more work later." },
+            { phrase: "I'm coming at it from..", text: "We should target enterprise companies immediately. I'm coming at it from.. a risk-management side, preferring to test with smaller clients first." },
+            { phrase: "I'm coming at it from..", text: "Mandatory overtime is the only way to finish this. I'm coming at it from.. a team morale standpoint, which could plummet if we do that." },
 
-            // {My best knowledge of it is..}
-            { phrase: "My best knowledge of it is..", context: "Documentation", text: "There is no record of this bug ever happening before. My best knowledge of it is.. that it was logged in the legacy system three years ago." },
-            { phrase: "My best knowledge of it is..", context: "Legal", text: "We don't need user consent to collect this data. My best knowledge of it is.. that the new privacy laws require explicit opt-in for tracking." },
-            { phrase: "My best knowledge of it is..", context: "Procedure", text: "Anyone on the team can approve the final release. My best knowledge of it is.. that only the project lead has the final sign-off authority." },
-            { phrase: "My best knowledge of it is..", context: "Client Request", text: "They want the website to be entirely green. My best knowledge of it is.. that they wanted green accents, not necessarily the entire background." },
-            { phrase: "My best knowledge of it is..", context: "Tooling", text: "This framework doesn't support mobile platforms at all. My best knowledge of it is.. that version 4 introduced full mobile compatibility last month." }
+            { phrase: "My best knowledge of it is..", text: "There is no record of this bug ever happening before. My best knowledge of it is.. that it was logged in the legacy system three years ago." },
+            { phrase: "My best knowledge of it is..", text: "We don't need user consent to collect this data. My best knowledge of it is.. that the new privacy laws require explicit opt-in for tracking." },
+            { phrase: "My best knowledge of it is..", text: "Anyone on the team can approve the final release. My best knowledge of it is.. that only the project lead has the final sign-off authority." },
+            { phrase: "My best knowledge of it is..", text: "They want the website to be entirely green. My best knowledge of it is.. that they wanted green accents, not necessarily the entire background." },
+            { phrase: "My best knowledge of it is..", text: "This framework doesn't support mobile platforms at all. My best knowledge of it is.. that version 4 introduced full mobile compatibility last month." }
         ];
+
+        // Randomize the data array (Fisher-Yates Shuffle)
+        for (let i = data.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [data[i], data[j]] = [data[j], data[i]];
+        }
 
         // 2. STATE & DOM ELEMENTS
         let currentIndex = 0;
-        let isLocked = false; // Prevents rapid scrolling
+        let isLocked = false; 
 
         const elPrefix = document.getElementById('text-prefix');
         const elPhrase = document.getElementById('phrase-display');
         const elSuffix = document.getElementById('text-suffix');
-        const elContext = document.getElementById('context-tag');
         const elProgress = document.getElementById('progress');
         
         const zoneTop = document.getElementById('zone-top');
@@ -242,9 +221,6 @@
             const percent = ((index + 1) / data.length) * 100;
             elProgress.style.width = `${percent}%`;
 
-            // Split text around the phrase
-            // We use .split() to separate the sentence into [Prefix, Suffix]
-            // We assume the phrase appears exactly once in the text.
             const parts = item.text.split(item.phrase);
             const prefix = parts[0] || "";
             const suffix = parts[1] || "";
@@ -254,24 +230,22 @@
             zoneBottom.style.opacity = 0;
             elPhrase.style.transform = "scale(0.9)";
 
+            // Reduced delay for a snappier feel
             setTimeout(() => {
-                // Update Content
-                elContext.textContent = item.context;
                 elPrefix.textContent = prefix.trim();
-                elPhrase.textContent = item.phrase; // The anchor
+                elPhrase.textContent = item.phrase; 
                 elSuffix.textContent = suffix.trim();
 
                 // Visual Fade In
                 zoneTop.style.opacity = 1;
                 zoneBottom.style.opacity = 1;
                 elPhrase.style.transform = "scale(1)";
-            }, 200);
+            }, 150);
         }
 
         // 4. NAVIGATION CONTROLLER
         function navigate(direction) {
-            // DIRECTION: 1 for next, -1 for prev
-            if (isLocked) return; // Ignore input if locked
+            if (isLocked) return; 
 
             if (direction === 1) {
                 if (currentIndex < data.length - 1) {
@@ -288,28 +262,24 @@
             }
         }
 
-        // 5. LOCKING MECHANISM (UX fix for "Two changes in one scroll")
+        // 5. LOCKING MECHANISM 
         function triggerLock() {
             isLocked = true;
-            // Lock interaction for 1200ms (1.2 seconds) to prevent momentum scrolling skipping slides
+            // Reduced to 400ms. Still prevents touchpad-bounce but feels much more reactive.
             setTimeout(() => {
                 isLocked = false;
-            }, 1200);
+            }, 400); 
         }
 
         // 6. INPUT HANDLERS
-
-        // A. Mouse Wheel
         window.addEventListener('wheel', (e) => {
             if (isLocked) return;
-            // Threshold ensures tiny accidental movements don't trigger
             if (Math.abs(e.deltaY) > 20) {
                 if (e.deltaY > 0) navigate(1);
                 else navigate(-1);
             }
         });
 
-        // B. Touch Swipe
         let touchStartY = 0;
         let touchEndY = 0;
 
@@ -325,14 +295,12 @@
 
         function handleSwipe() {
             const yDiff = touchStartY - touchEndY;
-            // Threshold of 40px to count as a swipe
             if (Math.abs(yDiff) > 40) {
-                if (yDiff > 0) navigate(1); // Swipe Up -> Next
-                else navigate(-1); // Swipe Down -> Prev
+                if (yDiff > 0) navigate(1); 
+                else navigate(-1); 
             }
         }
 
-        // C. Keyboard
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') navigate(1);
             if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
